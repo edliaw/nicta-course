@@ -62,7 +62,10 @@ the contents of c
 main ::
   IO ()
 main =
-  error "todo: Course.FileIO#main"
+  getArgs >>= \args ->
+  case args of
+  filename :. Nil -> run filename
+  _ -> putStrLn "Usage: runhaskell FileIO.hs filename"
 
 type FilePath =
   Chars
@@ -71,31 +74,36 @@ type FilePath =
 run ::
   Chars
   -> IO ()
-run =
-  error "todo: Course.FileIO#run"
+run fn =
+  do content <- readFile fn
+     results <- getFiles (lines content)
+     printFiles results
 
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles =
-  error "todo: Course.FileIO#getFiles"
+getFiles = sequence . map getFile
 
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile f = readFile f >>= (\g -> pure (f, g))
 
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
+printFiles = (void . sequence) . map (uncurry printFile)
+--printFiles Nil = return ()
+--printFiles ((f, c) :. fs) = do
+--  printFile f c
+--  printFiles fs
+--printFiles = foldRight (\(f, c) b -> printFile f c >> b) (return ())
 
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+printFile f c =
+  do putStrLn ("============ " ++ f)
+     putStrLn c
 
